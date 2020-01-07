@@ -34,7 +34,6 @@ mod expr;
 mod bdd;
 mod idd;
 mod cubes;
-mod simplify;
 
 pub use expr::*;
 pub use bdd::*;

@@ -8,7 +8,7 @@ use std::collections::hash_map::Entry as HashEntry;
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 
-use {BDDFunc, BDDLabel, LabelBDD, BDD_ONE, BDD_ZERO};
+use {BDDFunc, BDDLabel, BDD, BDD_ONE, BDD_ZERO};
 
 #[derive(Clone, Debug, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub(crate) enum IDDFunc {
@@ -79,7 +79,7 @@ impl LabelIDD {
         }
     }
 
-    pub(crate) fn from_bdd(bdd: &LabelBDD) -> LabelIDD {
+    pub(crate) fn from_bdd(bdd: &BDD) -> LabelIDD {
         let mut l = LabelIDD::new();
         for n in &bdd.nodes {
             let lo = l.from_bdd_func(n.lo);
@@ -190,7 +190,7 @@ impl LabelIDD {
         self.arith_op(a, b, &|aconst, bconst| cmp::max(aconst, bconst))
     }
 
-    pub fn eq(&self, a: IDDFunc, b: IDDFunc, bdd: &mut LabelBDD) -> BDDFunc {
+    pub fn eq(&self, a: IDDFunc, b: IDDFunc, bdd: &mut BDD) -> BDDFunc {
         if a.is_const() && b.is_const() {
             if a.as_const().unwrap() == b.as_const().unwrap() {
                 BDD_ONE
@@ -302,7 +302,7 @@ mod test {
 
     #[test]
     fn test_idd_from_bdd() {
-        let mut bdd = LabelBDD::new();
+        let mut bdd = BDD::new();
         let x0_bdd = bdd.terminal(0);
         let x1_bdd = bdd.terminal(1);
         let x2_bdd = bdd.and(x0_bdd, x1_bdd);
@@ -338,7 +338,7 @@ mod test {
         let x1 = idd.terminal(1, 35, 40);
         let x2 = idd.add(x0.clone(), x1.clone());
         let x3 = idd.min(x0.clone(), x1.clone());
-        let mut bdd = LabelBDD::new();
+        let mut bdd = BDD::new();
         let eq0 = idd.eq(x3.clone(), x0.clone(), &mut bdd);
         assert!(eq0 == BDD_ONE);
         let const45 = idd.constant(45);
